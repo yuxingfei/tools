@@ -795,6 +795,7 @@ func RunTempFileDialog(owner walk.Form, tempTextStruct *TempTextStruct) (int, er
 	}
 
 	tempFileTextEdit.SetText(strings.ReplaceAll(string(content), "\n", "\r\n"))
+	tempFileTextEdit.SetFocus()
 
 	return dlg.Run(), err
 }
