@@ -223,14 +223,14 @@ func main() {
 				Text:    "temp文件",
 				MinSize: Size{60, 60},
 				OnClicked: func() {
-					if cmd, err := RunTempFileDialog(mw,tempTextStruct); err != nil {
-						walk.MsgBox(mw,"title",err.Error(),walk.MsgBoxIconInformation)
+					if cmd, err := RunTempFileDialog(mw, tempTextStruct); err != nil {
+						walk.MsgBox(mw, "title", err.Error(), walk.MsgBoxIconInformation)
 					} else if cmd == walk.DlgCmdOK {
-						tempFile,err := sFtpCli.OpenFile("/www/temp.txt",os.O_RDWR|os.O_TRUNC|os.O_CREATE)
-						if err != nil{
-							walk.MsgBox(mw,"Error",err.Error(),walk.MsgBoxIconError)
+						tempFile, err := sFtpCli.OpenFile("/www/temp.txt", os.O_RDWR|os.O_TRUNC|os.O_CREATE)
+						if err != nil {
+							walk.MsgBox(mw, "Error", err.Error(), walk.MsgBoxIconError)
 						}
-						tempFile.Write([]byte(strings.ReplaceAll(tempTextStruct.TempTextString,"\r\n","\n")))
+						tempFile.Write([]byte(strings.ReplaceAll(tempTextStruct.TempTextString, "\r\n", "\n")))
 						tempFile.Close()
 					}
 				},
