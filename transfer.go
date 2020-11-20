@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const REMOTE_DIR  = "/www/tempfile"
+const REMOTE_DIR = "/www/tempfile"
 
 type Directory struct {
 	name     string
@@ -121,12 +121,12 @@ func NewDirectoryTreeModel() (*DirectoryTreeModel, error) {
 		"C:\\Users\\moerlong\\Pictures",
 	}
 	var commonUseFileDirsDirectory []*Directory
-	for _,commonUseFileDir := range commonUseFileDirs{
-		_,err = os.Stat(commonUseFileDir)
-		if err != nil{
+	for _, commonUseFileDir := range commonUseFileDirs {
+		_, err = os.Stat(commonUseFileDir)
+		if err != nil {
 			continue
 		}
-		commonUseFileDirsDirectory = append(commonUseFileDirsDirectory,NewDirectory(commonUseFileDir,nil))
+		commonUseFileDirsDirectory = append(commonUseFileDirsDirectory, NewDirectory(commonUseFileDir, nil))
 	}
 
 	for _, drive := range drives {
@@ -139,7 +139,7 @@ func NewDirectoryTreeModel() (*DirectoryTreeModel, error) {
 	}
 	//常用文件夹
 	if len(commonUseFileDirsDirectory) > 0 {
-		model.roots = append(model.roots,commonUseFileDirsDirectory ...)
+		model.roots = append(model.roots, commonUseFileDirsDirectory...)
 	}
 
 	return model, nil

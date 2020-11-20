@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-const USER  = "www"
-const PWD  = "yuxingfei"
-const HOST  = "10.1.2.179"
-const PORT  = 22
+const USER = "www"
+const PWD = "yuxingfei"
+const HOST = "10.1.2.179"
+const PORT = 22
 
 //连接
 func Connect() (*sftp.Client, error) {
@@ -35,7 +35,7 @@ func Connect() (*sftp.Client, error) {
 		User:    USER,
 		Auth:    auth,
 		Timeout: 30 * time.Second,
-		HostKeyCallback:func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
 			return nil
 		},
 	}
@@ -76,7 +76,7 @@ func uploadFile(sftpClient *sftp.Client, localFilePath string, remotePath string
 	//读取本地文件,写入到远程文件中(这里没有分快穿,自己写的话可以改一下,防止内存溢出)
 	ff, err := ioutil.ReadAll(srcFile)
 	if err != nil {
-		return "ReadAll error : "+ err.Error() + " " + localFilePath
+		return "ReadAll error : " + err.Error() + " " + localFilePath
 	}
 	dstFile.Write(ff)
 	return localFilePath + "  copy file to remote server finished!"
@@ -100,7 +100,7 @@ func uploadDirectory(sftpClient *sftp.Client, localPath string, remotePath strin
 			sftpClient.Mkdir(remoteFilePath)
 			uploadDirectory(sftpClient, localFilePath, remoteFilePath)
 		} else {
-			remoteAllPath := strings.TrimRight(remotePath,"/") + "/" + backupDir.Name()
+			remoteAllPath := strings.TrimRight(remotePath, "/") + "/" + backupDir.Name()
 			uploadFile(sftpClient, path.Join(localPath, backupDir.Name()), remoteAllPath)
 		}
 	}
@@ -116,9 +116,9 @@ func Upload(sftpClient *sftp.Client, localPath string, remotePath string) string
 	}
 	//判断是否是文件夹
 	var msg string
-	if(s.IsDir()) {
+	if s.IsDir() {
 		msg = uploadDirectory(sftpClient, localPath, remotePath)
-	}else{
+	} else {
 		msg = uploadFile(sftpClient, localPath, remotePath)
 	}
 	return msg

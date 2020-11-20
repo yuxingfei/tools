@@ -49,6 +49,8 @@ type TempTextStruct struct {
 
 //ssh客户端
 var sshCli *ssh.Cli
+
+//sFtp客户端
 var sFtpCli *sftp.Client
 
 //ssh目录初始化
@@ -72,13 +74,13 @@ func main() {
 		if len(projectNameArr) == 0 {
 			out, err := sshCli.Run("ls")
 			if err != nil {
-				walk.MsgBox(mw,"title","ssh run error. err:" + err.Error(),walk.MsgBoxIconInformation)
+				walk.MsgBox(mw, "title", "ssh run error. err:"+err.Error(), walk.MsgBoxIconInformation)
 			}
 			projectNameArr = strings.Split(out, "\n")
 		}
-		sFtpCli,err = ssh_client.Connect()
+		sFtpCli, err = ssh_client.Connect()
 		if err != nil {
-			walk.MsgBox(mw,"Error",err.Error(),walk.MsgBoxIconError)
+			walk.MsgBox(mw, "Error", err.Error(), walk.MsgBoxIconError)
 		}
 	}()
 
@@ -111,11 +113,11 @@ func main() {
 					//本机授权
 					ip := getLocalIpAddr()
 					if ip != "10.1.2.49" {
-						walk.MsgBox(mw,"title","本机没有授权",walk.MsgBoxIconInformation)
+						walk.MsgBox(mw, "title", "本机没有授权", walk.MsgBoxIconInformation)
 						return
 					}
 
-					if cmd, sshCli, err := RunCodeRsyncDialog(sshCli,mw, codeRsyncItem); err != nil {
+					if cmd, sshCli, err := RunCodeRsyncDialog(sshCli, mw, codeRsyncItem); err != nil {
 						outTE.SetText(err.Error())
 					} else if cmd == walk.DlgCmdOK {
 						projectName := codeRsyncItem.MapItems[codeRsyncItem.CheckItem]
@@ -206,14 +208,14 @@ func main() {
 					//本机授权
 					ip := getLocalIpAddr()
 					if ip != "10.1.2.49" {
-						walk.MsgBox(mw,"title","本机没有授权",walk.MsgBoxIconInformation)
+						walk.MsgBox(mw, "title", "本机没有授权", walk.MsgBoxIconInformation)
 						return
 					}
 
 					if cmd, err := RunTransferDialog(mw); err != nil {
-						walk.MsgBox(mw,"title",err.Error(),walk.MsgBoxIconInformation)
+						walk.MsgBox(mw, "title", err.Error(), walk.MsgBoxIconInformation)
 					} else if cmd == walk.DlgCmdOK {
-						walk.MsgBox(mw,"title","Run Transfer Ok.",walk.MsgBoxIconInformation)
+						walk.MsgBox(mw, "title", "Run Transfer Ok.", walk.MsgBoxIconInformation)
 					}
 				},
 			},
@@ -224,7 +226,7 @@ func main() {
 					if cmd, err := RunTempFileDialog(mw,tempTextStruct); err != nil {
 						walk.MsgBox(mw,"title",err.Error(),walk.MsgBoxIconInformation)
 					} else if cmd == walk.DlgCmdOK {
-						tempFile,err := sFtpCli.OpenFile("/www/temp.txt",os.O_RDWR)
+						tempFile,err := sFtpCli.OpenFile("/www/temp.txt",os.O_RDWR|os.O_TRUNC|os.O_CREATE)
 						if err != nil{
 							walk.MsgBox(mw,"Error",err.Error(),walk.MsgBoxIconError)
 						}
@@ -251,7 +253,7 @@ func main() {
 	// 设置窗体生成在屏幕的正中间
 	// 窗体横坐标 = ( 屏幕宽度 - 窗体宽度 ) / 2
 	// 窗体纵坐标 = ( 屏幕高度 - 窗体高度 ) / 2
-	mw.SetXPixels((int(win.GetSystemMetrics(0)) - mw.Width()) / 2 - 20)
+	mw.SetXPixels((int(win.GetSystemMetrics(0))-mw.Width())/2 - 20)
 	mw.SetYPixels((int(win.GetSystemMetrics(1)) - mw.Height()) / 2)
 
 	mw.Run()
@@ -516,15 +518,13 @@ func Md5StringEncrypt(md5Str string) string {
 	}
 }
 
-
-
 //代码同步界面
-func RunCodeRsyncDialog(cli *ssh.Cli,owner walk.Form, codeRsyncItem *CodeRsyncItem) (int, *ssh.Cli, error) {
+func RunCodeRsyncDialog(cli *ssh.Cli, owner walk.Form, codeRsyncItem *CodeRsyncItem) (int, *ssh.Cli, error) {
 	var dlg *walk.Dialog
 	var db *walk.DataBinder
 	var acceptPB, cancelPB *walk.PushButton
 
-	if cli == nil{
+	if cli == nil {
 		return 0, nil, errors.New("ssh连接失败")
 	}
 
@@ -615,7 +615,7 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 	return Dialog{
 		AssignTo:      &dlg,
 		Title:         "File Transfer",
-		Icon:     "favicon.ico",
+		Icon:          "favicon.ico",
 		DefaultButton: &acceptPB,
 		CancelButton:  &cancelPB,
 		Background: GradientBrush{
@@ -633,15 +633,15 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 				{4, 0, 2},
 			},
 		},
-		MinSize:  Size{1230, 680},
-		Size:     Size{1230, 680},
-		Layout:   VBox{},
+		MinSize: Size{1230, 680},
+		Size:    Size{1230, 680},
+		Layout:  VBox{},
 		Children: []Widget{
 			GroupBox{
-				Layout:Grid{Columns:1},
-				Children:[]Widget{
+				Layout: Grid{Columns: 1},
+				Children: []Widget{
 					HSplitter{
-						Column:3,
+						Column:   3,
 						AssignTo: &splitter,
 						Children: []Widget{
 							TreeView{
@@ -650,7 +650,7 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 								OnCurrentItemChanged: func() {
 									dir := treeView.CurrentItem().(*Directory)
 									choosePath := dir.Path()
-									logText.AppendText("\r\n"+ time.Now().Format("2006-01-02 15:04:05") +" " + choosePath)
+									logText.AppendText("\r\n" + time.Now().Format("2006-01-02 15:04:05") + " " + choosePath)
 									if err := tableModel.SetDirPath(dir.Path()); err != nil {
 										walk.MsgBox(
 											dlg,
@@ -686,14 +686,14 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 								Font:     Font{PointSize: 11},
 								AssignTo: &logText,
 								ReadOnly: true,
-								Text:"Log Record:",
+								Text:     "Log Record:",
 							},
 						},
 					},
 				},
 			},
 			PushButton{
-				Text:"Transfer",
+				Text: "Transfer",
 				OnClicked: func() {
 					var localDir string
 
@@ -705,20 +705,20 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 					}
 					localDir = filepath.ToSlash(localDir)
 
-					localDirArr := strings.Split(localDir,"/")
+					localDirArr := strings.Split(localDir, "/")
 					localDirArrLen := len(localDirArr)
-					name := localDirArr[localDirArrLen - 1]
-					if name == ""{
-						name = localDirArr[localDirArrLen - 2]
+					name := localDirArr[localDirArrLen-1]
+					if name == "" {
+						name = localDirArr[localDirArrLen-2]
 					}
-					remotePath := strings.TrimRight(REMOTE_DIR,"/") + "/" + name
+					remotePath := strings.TrimRight(REMOTE_DIR, "/") + "/" + name
 
 					//上传文件
 					//sClient,err := ssh_client.Connect()
 					//if err != nil {
 					//	walk.MsgBox(dlg,"Error",err.Error(),walk.MsgBoxIconError)
 					//}
-					msg := ssh_client.Upload(sFtpCli,localDir,remotePath)
+					msg := ssh_client.Upload(sFtpCli, localDir, remotePath)
 					logText.AppendText(msg)
 				},
 			},
@@ -727,30 +727,25 @@ func RunTransferDialog(owner walk.Form) (int, error) {
 }
 
 //temp text文件编写界面
-func RunTempFileDialog(owner walk.Form,tempTextStruct *TempTextStruct) (int, error) {
+func RunTempFileDialog(owner walk.Form, tempTextStruct *TempTextStruct) (int, error) {
 	var dlg *walk.Dialog
 	var db *walk.DataBinder
 	var acceptPB, cancelPB *walk.PushButton
 	var tempFileTextEdit *walk.TextEdit
 
-	//sClient,err := ssh_client.Connect()
-	//if err != nil {
-	//	walk.MsgBox(dlg,"Error",err.Error(),walk.MsgBoxIconError)
-	//}
-	tempFile,err := sFtpCli.OpenFile("/www/temp.txt",os.O_RDWR)
-	if err != nil{
-		walk.MsgBox(dlg,"Error",err.Error(),walk.MsgBoxIconError)
+	tempFile, err := sFtpCli.OpenFile("/www/temp.txt", os.O_RDONLY)
+	if err != nil {
+		walk.MsgBox(dlg, "Error", err.Error(), walk.MsgBoxIconError)
 	}
-	content,_ := ioutil.ReadAll(tempFile)
+	content, _ := ioutil.ReadAll(tempFile)
 	tempFile.Close()
-	//tempTextStruct.TempTextString = strings.ReplaceAll(string(content),"\n","\r\n")
 
 	if err = (Dialog{
 		AssignTo:      &dlg,
 		Title:         "临时文件存储",
-		Icon:     "favicon.ico",
-		MinSize: Size{1200, 800},
-		Layout:  VBox{},
+		Icon:          "favicon.ico",
+		MinSize:       Size{1200, 800},
+		Layout:        VBox{},
 		DefaultButton: &acceptPB,
 		CancelButton:  &cancelPB,
 		DataBinder: DataBinder{
@@ -762,7 +757,7 @@ func RunTempFileDialog(owner walk.Form,tempTextStruct *TempTextStruct) (int, err
 		Children: []Widget{
 			Composite{
 				Layout: Grid{Columns: 2},
-				Children:[]Widget{
+				Children: []Widget{
 					TextEdit{
 						Font:     Font{PointSize: 11},
 						VScroll:  true,
@@ -778,7 +773,7 @@ func RunTempFileDialog(owner walk.Form,tempTextStruct *TempTextStruct) (int, err
 					HSpacer{},
 					PushButton{
 						AssignTo: &acceptPB,
-						Text:     "确定",
+						Text:     "保存",
 						OnClicked: func() {
 							if err := db.Submit(); err != nil {
 								log.Print(err)
@@ -795,12 +790,11 @@ func RunTempFileDialog(owner walk.Form,tempTextStruct *TempTextStruct) (int, err
 				},
 			},
 		},
-	}).Create(owner); err != nil{
+	}).Create(owner); err != nil {
 		log.Fatal(err)
 	}
 
-	tempFileTextEdit.SetText(strings.ReplaceAll(string(content),"\n","\r\n"))
-	tempFileTextEdit.Focused()
+	tempFileTextEdit.SetText(strings.ReplaceAll(string(content), "\n", "\r\n"))
 
-	return dlg.Run(),err
+	return dlg.Run(), err
 }
