@@ -241,6 +241,8 @@ func main() {
 			},
 			TextEdit{
 				Font:     Font{PointSize: 11},
+				VScroll:  true,
+				HScroll:  true,
 				AssignTo: &outTE,
 				ReadOnly: true,
 				Text:     fmt.Sprintf("请选择上面需要进行的操作..."),
