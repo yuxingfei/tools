@@ -181,26 +181,6 @@ func main() {
 					}
 				},
 			},
-			//v1.0.0版本
-			//PushButton{
-			//	Text:    "文件",
-			//	MinSize: Size{60, 60},
-			//	OnClicked: func() {
-			//		//本机授权
-			//		ip := getLocalIpAddr()
-			//		if ip != "10.1.2.49" {
-			//			walk.MsgBox(mw,"title","本机没有授权",walk.MsgBoxIconInformation)
-			//			return
-			//		}
-			//		filePath := "D:\\Go\\src\\gui\\transfer\\transfer.exe"
-			//		if _,err := os.Stat(filePath); err != nil{
-			//			walk.MsgBox(mw,"title","没有发现文件程序",walk.MsgBoxIconInformation)
-			//			return
-			//		}
-			//
-			//		checkExe2(filepath.ToSlash(filePath))
-			//	},
-			//},
 			PushButton{
 				Text:    "文件",
 				MinSize: Size{60, 60},
