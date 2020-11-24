@@ -126,7 +126,7 @@ func main() {
 						if err != nil {
 							outTE.SetText("err:" + err.Error())
 						} else {
-							outTE.SetText(fmt.Sprintf("%v", output))
+							outTE.SetText(strings.ReplaceAll(fmt.Sprintf("%v", output), "\n", "\r\n"))
 						}
 					}
 				},
