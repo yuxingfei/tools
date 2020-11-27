@@ -88,7 +88,7 @@ func main() {
 		AssignTo: &mw,
 		Title:    "便捷工具",
 		Icon:     "favicon.ico",
-		Size:     Size{430, 600},
+		Size:     Size{460, 600},
 		Layout:   VBox{},
 		Background: GradientBrush{
 			Vertexes: []walk.GradientVertex{
