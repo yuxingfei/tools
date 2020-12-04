@@ -120,14 +120,17 @@ func main() {
 					if cmd, sshCli, err := RunCodeRsyncDialog(sshCli, mw, codeRsyncItem); err != nil {
 						outTE.SetText(err.Error())
 					} else if cmd == walk.DlgCmdOK {
-						projectName := codeRsyncItem.MapItems[codeRsyncItem.CheckItem]
-						shellStr := "cd " + projectName + " && git pull origin master"
-						output, err := sshCli.Run(shellStr)
-						if err != nil {
-							outTE.SetText("err:" + err.Error())
-						} else {
-							outTE.SetText(strings.ReplaceAll(fmt.Sprintf("%v", output), "\n", "\r\n"))
-						}
+						outTE.SetText("请等待,代码同步中...")
+						go func() {
+							projectName := codeRsyncItem.MapItems[codeRsyncItem.CheckItem]
+							shellStr := "cd " + projectName + " && git pull origin master"
+							output, err := sshCli.Run(shellStr)
+							if err != nil {
+								outTE.SetText("err:" + err.Error())
+							} else {
+								outTE.SetText("同步结果:\r\n" + strings.ReplaceAll(fmt.Sprintf("%v", output), "\n", "\r\n"))
+							}
+						}()
 					}
 				},
 			},
